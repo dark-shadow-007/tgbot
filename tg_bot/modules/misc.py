@@ -3,7 +3,7 @@ import json
 import random
 from datetime import datetime
 from typing import Optional, List
-
+import time
 import requests
 from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
@@ -73,6 +73,8 @@ SLAP_TEMPLATES = (
     "{user1} {hits} {user2} in the face with a {item}.",
     "{user1} {hits} {user2} around a bit with a {item}.",
     "{user1} {throws} a {item} at {user2}.",
+    "{user1} kicked {user2}'s ass for no reason.",
+    "{user1} slapped hardly {user2}'s face for dating his girlfriend.",
     "{user1} grabs a {item} and {throws} it at {user2}'s face.",
     "{user1} launches a {item} in {user2}'s general direction.",
     "{user1} starts slapping {user2} silly with a {item}.",
@@ -80,6 +82,7 @@ SLAP_TEMPLATES = (
     "{user1} grabs up a {item} and {hits} {user2} with it.",
     "{user1} ties {user2} to a chair and {throws} a {item} at them.",
     "{user1} gave a friendly push to help {user2} learn to swim in lava."
+    "{user1} grabs a {item} and {throws} it at {user2}'s ass."
 )
 
 ITEMS = (
@@ -89,6 +92,13 @@ ITEMS = (
     "cricket bat",
     "wooden cane",
     "nail",
+    "69 days old socks",
+    "allout",
+    "nokia 3310",
+    "used underwear",
+    "thor's hammer",
+    "cake of shit",
+    "****",
     "printer",
     "shovel",
     "CRT monitor",
@@ -99,6 +109,7 @@ ITEMS = (
     "five ton truck",
     "roll of duct tape",
     "book",
+    "boiled chicken",
     "laptop",
     "old television",
     "sack of rocks",
@@ -321,6 +332,13 @@ def echo(bot: Bot, update: Update):
         message.reply_text(args[1], quote=False)
     message.delete()
 
+def ping(bot: Bot, update: Update):
+    start_time = time.time()
+    bot.send_message(update.effective_chat.id, "Starting ping testing now!")
+    end_time = time.time()
+    ping_time = float(end_time - start_time)*1000
+    update.effective_message.reply_text(" Ping speed was : {}ms".format(ping_time))
+
 
 MARKDOWN_HELP = """
 Markdown is a very powerful formatting tool supported by telegram. {} has some enhancements, to make sure that \
@@ -383,12 +401,14 @@ RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
 
+PING_HANDLER = DisableAbleCommandHandler("ping", ping)
 ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
 MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
 
 STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
 
 dispatcher.add_handler(ID_HANDLER)
+dispatcher.add_handler(PING_HANDLER)
 dispatcher.add_handler(IP_HANDLER)
 dispatcher.add_handler(TIME_HANDLER)
 dispatcher.add_handler(RUNS_HANDLER)
